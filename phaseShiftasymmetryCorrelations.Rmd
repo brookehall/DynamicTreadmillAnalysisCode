@@ -1,0 +1,111 @@
+---
+title: "phaseShiftasymmetryCorrelations"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tinytex)
+library(readxl)
+library(tidyverse)
+library(ggpubr)
+library(readr)
+library(rstatix)
+library(tidyr)
+library(stats, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+library(corrplot)
+```
+# Load asymmetry and phasing data frames
+```{r}
+asym <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/interlimbAsymTable.xls")
+phase <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/phasetable.xls")
+coo <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/COOPhasingtable.xls")
+phase <- phase[4]
+coo <- coo[7]
+coo = coo[seq(1, nrow(coo), 2), ]
+df <- cbind(asym,phase,coo)
+# write_csv(df, "C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/phasecoointerlimbbiomechanics.csv") # load this file in
+dffirst30 <- df %>% filter(`Time`=="first30")
+dflast30 <- df %>% filter(`Time`=="last30")
+
+dflate <- df %>% filter(`Time`=="last30")
+
+dffirst30 <- subset(dffirst30, select = -Participants)
+dffirst30 <- subset(dffirst30, select = -Trials)
+dffirst30 <- subset(dffirst30, select = -Time)
+dflast30 <- subset(dflast30, select = -Participants)
+dflast30 <- subset(dflast30, select = -Trials)
+dflast30 <- subset(dflast30, select = -Time)
+
+
+# Pull out trials
+SlowHS <- df %>% filter(`Trials`=="SlowHS")
+FastHS <- df %>% filter(`Trials`=="FastHS")
+AccHS <- df %>% filter(`Trials`=="AcceleratingHS")
+DecHS <- df %>% filter(`Trials`=="DeceleratingHS")
+
+# Pull out first and last30
+Slowfirst30 <- SlowHS %>% filter(`Time`=="first30")
+Slowlast30 <- SlowHS %>% filter(`Time`=="last30")
+Slowfirst30 <- subset(Slowfirst30, select = -Participants)
+Slowfirst30 <- subset(Slowfirst30, select = -Trials)
+Slowfirst30 <- subset(Slowfirst30, select = -Time)
+Slowlast30 <- subset(Slowlast30, select = -Participants)
+Slowlast30 <- subset(Slowlast30, select = -Trials)
+Slowlast30 <- subset(Slowlast30, select = -Time)
+
+Fastfirst30 <- FastHS %>% filter(`Time`=="first30")
+Fastlast30 <- FastHS %>% filter(`Time`=="last30")
+Fastfirst30 <- subset(Fastfirst30, select = -Participants)
+Fastfirst30 <- subset(Fastfirst30, select = -Trials)
+Fastfirst30 <- subset(Fastfirst30, select = -Time)
+Fastlast30 <- subset(Fastlast30, select = -Participants)
+Fastlast30 <- subset(Fastlast30, select = -Trials)
+Fastlast30 <- subset(Fastlast30, select = -Time)
+
+Accfirst30 <- AccHS %>% filter(`Time`=="first30")
+Acclast30 <- AccHS %>% filter(`Time`=="last30")
+Accfirst30 <- subset(Accfirst30, select = -Participants)
+Accfirst30 <- subset(Accfirst30, select = -Trials)
+Accfirst30 <- subset(Accfirst30, select = -Time)
+Acclast30 <- subset(Acclast30, select = -Participants)
+Acclast30 <- subset(Acclast30, select = -Trials)
+Acclast30 <- subset(Acclast30, select = -Time)
+
+Decfirst30 <- DecHS %>% filter(`Time`=="first30")
+Declast30 <- DecHS %>% filter(`Time`=="last30")
+Decfirst30 <- subset(Decfirst30, select = -Participants)
+Decfirst30 <- subset(Decfirst30, select = -Trials)
+Decfirst30 <- subset(Decfirst30, select = -Time)
+Declast30 <- subset(Declast30, select = -Participants)
+Declast30 <- subset(Declast30, select = -Trials)
+Declast30 <- subset(Declast30, select = -Time)
+```
+# Correlation tables for last 30
+```{r}
+Slowlast30$`Step Time` <- as.numeric(Slowlast30$`Step Time`)
+Fastlast30$`Step Time` <- as.numeric(Fastlast30$`Step Time`)
+Acclast30$`Step Time` <- as.numeric(Acclast30$`Step Time`)
+Declast30$`Step Time` <- as.numeric(Declast30$`Step Time`)
+```
+# Slow Correlations
+```{r}
+cor_test(Slowlast30)
+options(tibble.width = Inf) # displays all columns.
+options(tibble.print_max = Inf) # to show all the rows.
+cor_test(Fastlast30)
+options(tibble.width = Inf) # displays all columns.
+options(tibble.print_max = Inf) # to show all the rows.
+cor_test(Acclast30)
+options(tibble.width = Inf) # displays all columns.
+options(tibble.print_max = Inf) # to show all the rows.
+cor_test(Declast30)
+options(tibble.width = Inf) # displays all columns.
+options(tibble.print_max = Inf) # to show all the rows.
+cor_test(dflast30)
+options(tibble.width = Inf) # displays all columns.
+options(tibble.print_max = Inf) # to show all the rows.
+```

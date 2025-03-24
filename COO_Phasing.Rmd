@@ -1,0 +1,112 @@
+---
+title: "COO_Phasing"
+output:
+  html_document:
+    df_print: paged
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Load in xls file
+```{r} 
+library(tinytex)
+library(readxl)
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+library(dplyr)
+library(tidyr)
+data_table <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/COOPhasingtable.xls")
+df <-data_table %>% filter(`Time`=="last30")
+library(stats, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+```
+# Pull out each trial
+```{r}
+SlowHS <- df %>% filter(`Trials`=="SlowHS")
+FastHS <- df %>% filter(`Trials`=="FastHS")
+AccHS <- df %>% filter(`Trials`=="AcceleratingHS")
+DecHS <- df %>% filter(`Trials`=="DeceleratingHS")
+
+SP <- SlowHS %>% filter(`Leg`=="Right")
+FP <- FastHS %>% filter(`Leg`=="Right")
+AP <- AccHS %>% filter(`Leg`=="Right")
+DP <- DecHS %>% filter(`Leg`=="Right")
+
+dataphase <- df %>% filter(`Leg` == "Right")
+
+SlowHS.new = SlowHS[seq(1, nrow(SlowHS), 2), ]
+FastHS.new = FastHS[seq(1, nrow(FastHS), 2), ]
+AccHS.new = AccHS[seq(1, nrow(AccHS), 2), ]
+DecHS.new = DecHS[seq(1, nrow(DecHS), 2), ]
+
+df.new = df[seq(1, nrow(df), 2), ]
+```
+# ANOVA for center of oscillation
+```{r}
+res.aov <- anova_test(
+  data = df, dv = `Center of Oscillation`, wid = Participants,
+  within = c(Leg, Trials)
+  )
+get_anova_table(res.aov, correction = "GG")
+res.aov$ANOVA
+res.aov$`Mauchly's Test for Sphericity`
+res.aov$`Sphericity Corrections`
+```
+# Post-hoc for center of oscillation
+```{r}
+# Pairwise test of the legxtrial interaction
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Center of Oscillation` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Center of Oscillation` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+```
+# ANOVA for Center of oscillation difference and phasing
+```{r}
+cood.aov <- anova_test(
+  data = df.new, dv = `Center of Oscillation Difference`, wid = Participants,
+  within = c(Trials)
+  )
+get_anova_table(cood.aov, correction= c("none"))
+cood.aov$ANOVA
+cood.aov$`Mauchly's Test for Sphericity`
+cood.aov$`Sphericity Corrections`
+
+phase.aov <- anova_test(
+  data = df.new, dv = `Phasing`, wid = Participants,
+  within = c(Trials)
+  )
+get_anova_table(phase.aov, correction = "GG")
+phase.aov$ANOVA
+phase.aov$`Mauchly's Test for Sphericity`
+phase.aov$`Sphericity Corrections`
+```
+# Post hoc
+```{r}
+trial.effect <- df.new %>%
+  pairwise_t_test(
+    `Phasing` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+trial.effect %>% print(width=Inf)
+
+trial.effect <- df.new %>%
+  pairwise_t_test(
+    `Center of Oscillation Difference` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+trial.effect %>% print(width=Inf)
+```

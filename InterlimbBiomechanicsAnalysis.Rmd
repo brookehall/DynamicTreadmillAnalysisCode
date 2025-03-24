@@ -1,0 +1,80 @@
+---
+title: "InterlimbBiomechanics"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Load data
+```{r}
+library(readxl)
+data_table <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Analyses/interlimbbiomechanics_2025Jan23.xls")
+library(stats, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+data_table <- data_table %>% filter(`Condition`=="1")
+```
+# ANOVA for trial differences
+```{r}
+steplength <- aov(`Step Length` ~ `Trials` * `Leg`, data=data_table)
+summary(steplength)
+
+steptime <- aov(`Step Time` ~ `Trials` * `Leg`, data=data_table)
+summary(steptime)
+
+stancetime <- aov(`Stance Time` ~ `Trials` * `Leg`, data=data_table)
+summary(stancetime)
+
+swingtime <- aov(`Swing Time` ~ `Trials` * `Leg`, data=data_table)
+summary(swingtime)
+
+doublesupporttime <- aov(`Double Support Time` ~ `Trials` * `Leg`, data=data_table)
+summary(doublesupporttime)
+
+alphaangle <- aov(`Leading Limb Angle` ~ `Trials` * `Leg`, data=data_table)
+summary(alphaangle)
+
+betaangle <- aov(`Trailing Limb Angle` ~ `Trials` * `Leg`, data=data_table)
+summary(betaangle)
+
+ppro <- aov(`Peak Propulsion` ~ `Trials` * `Leg`, data=data_table)
+summary(ppro)
+
+```
+# Post-hoc analyses
+# step length
+```{r}
+library(multcompView)
+TukeyHSD(steplength)
+```
+# Step time
+```{r}
+TukeyHSD(steptime)
+```
+# Stance time
+```{r}
+TukeyHSD(stancetime)
+```
+# Swing time
+```{r}
+TukeyHSD(swingtime)
+```
+# double support time
+```{r}
+TukeyHSD(doublesupporttime)
+```
+# alpha angle
+```{r}
+TukeyHSD(alphaangle)
+```
+# beta angle
+```{r}
+TukeyHSD(betaangle)
+```
+# peak propulsion
+```{r}
+TukeyHSD(ppro)
+```
+
+
