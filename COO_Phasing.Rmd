@@ -18,8 +18,9 @@ library(ggpubr)
 library(rstatix)
 library(dplyr)
 library(tidyr)
-data_table <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/COOPhasingtable.xls")
-df <-data_table %>% filter(`Time`=="last30")
+df <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/CooPhaseTable_2025May30.xls")
+data_table <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/CooPhaseTable_2025May30.xls")
+# df <-data_table %>% filter(`Time`=="last30")
 library(stats, warn.conflicts = FALSE)
 library(dplyr, warn.conflicts = FALSE)
 ```
@@ -84,9 +85,10 @@ get_anova_table(cood.aov, correction= c("none"))
 cood.aov$ANOVA
 cood.aov$`Mauchly's Test for Sphericity`
 cood.aov$`Sphericity Corrections`
-
+```
+```{r}
 phase.aov <- anova_test(
-  data = df.new, dv = `Phasing`, wid = Participants,
+  data = df.new, dv = `Phase Shift`, wid = Participants,
   within = c(Trials)
   )
 get_anova_table(phase.aov, correction = "GG")
@@ -98,7 +100,7 @@ phase.aov$`Sphericity Corrections`
 ```{r}
 trial.effect <- df.new %>%
   pairwise_t_test(
-    `Phasing` ~ Trials, paired = TRUE,
+    `Phase Shift` ~ Trials, paired = TRUE,
     p.adjust.method = "bonferroni"
     )
 trial.effect %>% print(width=Inf)
@@ -110,3 +112,20 @@ trial.effect <- df.new %>%
     )
 trial.effect %>% print(width=Inf)
 ```
+
+```{r}
+df.new$Trials <- factor(df.new$Trials)
+df.new$Leg <- factor(df.new$Leg)
+model <- manova(cbind(`Phase Shift`,`Center of Oscillation Difference`) ~ `Trials`, 
+                data = df.new)
+
+summary(model)
+summary.aov(model)
+
+model_PHASE <- aov(`Phase Shift` ~ Trials, data = df.new)
+TukeyHSD(model_PHASE)
+
+model_COO <- aov(`Center of Oscillation Difference` ~ Trials, data = df.new)
+TukeyHSD(model_COO)
+```
+

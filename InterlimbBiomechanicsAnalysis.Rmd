@@ -1,6 +1,8 @@
 ---
 title: "InterlimbBiomechanics"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 date: "`r Sys.Date()`"
 ---
 
@@ -13,68 +15,286 @@ library(readxl)
 data_table <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Analyses/interlimbbiomechanics_2025Jan23.xls")
 library(stats, warn.conflicts = FALSE)
 library(dplyr, warn.conflicts = FALSE)
+library(tinytex)
+library(readxl)
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+library(dplyr)
+library(tidyr)
 data_table <- data_table %>% filter(`Condition`=="1")
 ```
 # ANOVA for trial differences
 ```{r}
-steplength <- aov(`Step Length` ~ `Trials` * `Leg`, data=data_table)
-summary(steplength)
-
-steptime <- aov(`Step Time` ~ `Trials` * `Leg`, data=data_table)
-summary(steptime)
-
-stancetime <- aov(`Stance Time` ~ `Trials` * `Leg`, data=data_table)
-summary(stancetime)
-
-swingtime <- aov(`Swing Time` ~ `Trials` * `Leg`, data=data_table)
-summary(swingtime)
-
-doublesupporttime <- aov(`Double Support Time` ~ `Trials` * `Leg`, data=data_table)
-summary(doublesupporttime)
-
-alphaangle <- aov(`Leading Limb Angle` ~ `Trials` * `Leg`, data=data_table)
-summary(alphaangle)
-
-betaangle <- aov(`Trailing Limb Angle` ~ `Trials` * `Leg`, data=data_table)
-summary(betaangle)
-
-ppro <- aov(`Peak Propulsion` ~ `Trials` * `Leg`, data=data_table)
-summary(ppro)
-
+steplength.aov <- anova_test(
+  data = data_table, dv = `Step Length`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(steplength.aov, correction= c("auto"))
+steplength.aov$ANOVA
+steplength.aov$`Mauchly's Test for Sphericity`
+steplength.aov$`Sphericity Corrections`
+```
+```{r}
+steptime.aov <- anova_test(
+  data = data_table, dv = `Step Time`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(steptime.aov, correction= c("auto"))
+steptime.aov$ANOVA
+steptime.aov$`Mauchly's Test for Sphericity`
+steptime.aov$`Sphericity Corrections`
+```
+```{r}
+stancetime.aov <- anova_test(
+  data = data_table, dv = `Stance Time`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(stancetime.aov, correction= c("auto"))
+stancetime.aov$ANOVA
+stancetime.aov$`Mauchly's Test for Sphericity`
+stancetime.aov$`Sphericity Corrections`
+```
+```{r}
+swingtime.aov <- anova_test(
+  data = data_table, dv = `Swing Time`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(swingtime.aov, correction= c("auto"))
+swingtime.aov$ANOVA
+swingtime.aov$`Mauchly's Test for Sphericity`
+swingtime.aov$`Sphericity Corrections`
+```
+```{r}
+doublesupporttime.aov <- anova_test(
+  data = data_table, dv = `Double Support Time`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(doublesupporttime.aov, correction= c("auto"))
+doublesupporttime.aov$ANOVA
+doublesupporttime.aov$`Mauchly's Test for Sphericity`
+doublesupporttime.aov$`Sphericity Corrections`
+```
+```{r}
+lla.aov <- anova_test(
+  data = data_table, dv = `Leading Limb Angle`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(lla.aov, correction= c("auto"))
+lla.aov$ANOVA
+lla.aov$`Mauchly's Test for Sphericity`
+lla.aov$`Sphericity Corrections`
+```
+```{r}
+tla.aov <- anova_test(
+  data = data_table, dv = `Trailing Limb Angle`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(tla.aov, correction= c("auto"))
+tla.aov$ANOVA
+tla.aov$`Mauchly's Test for Sphericity`
+tla.aov$`Sphericity Corrections`
+```
+```{r}
+ppro.aov <- anova_test(
+  data = data_table, dv = `Peak Propulsion`, wid = Participants,
+  within = c(Leg,Trials)
+  )
+get_anova_table(ppro.aov, correction= c("auto"))
+ppro.aov$ANOVA
+ppro.aov$`Mauchly's Test for Sphericity`
+ppro.aov$`Sphericity Corrections`
 ```
 # Post-hoc analyses
 # step length
 ```{r}
 library(multcompView)
-TukeyHSD(steplength)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Step Length` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Step Length` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
 # Step time
 ```{r}
-TukeyHSD(steptime)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Step Time` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Step Time` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
 # Stance time
 ```{r}
-TukeyHSD(stancetime)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Stance Time` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Stance Time` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
 # Swing time
 ```{r}
-TukeyHSD(swingtime)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Swing Time` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Swing Time` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
 # double support time
 ```{r}
-TukeyHSD(doublesupporttime)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Double Support Time` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Double Support Time` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
 # alpha angle
 ```{r}
-TukeyHSD(alphaangle)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Leading Limb Angle` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Leading Limb Angle` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
 # beta angle
 ```{r}
-TukeyHSD(betaangle)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Trailing Limb Angle` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Trailing Limb Angle` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
-# peak propulsion
+# ppro
 ```{r}
-TukeyHSD(ppro)
+pwc <- data_table %>%
+  group_by(Trials) %>%
+  pairwise_t_test(
+    `Peak Propulsion` ~ Leg, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
+
+pwc <- data_table %>%
+  group_by(Leg) %>%
+  pairwise_t_test(
+    `Peak Propulsion` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+pwc %>% print(width=Inf)
 ```
 
+```{r}
+# Add interaction term with *
+model <- manova(cbind(`Step Length`, `Step Time`, `Stance Time`, `Swing Time`, 
+                      `Double Support Time`, `Leading Limb Angle`, 
+                      `Trailing Limb Angle`) ~ Trials * Leg, 
+                data = data_table)
+
+summary(model)
+summary.aov(model)
+
+
+# Step Length
+model_sl <- aov(`Step Length` ~ Trials * Leg, data = data_table)
+TukeyHSD(model_sl)
+
+# step time
+model_st <- aov(`Step Time` ~ Trials * Leg, data = data_table)
+TukeyHSD(model_st)
+
+# stance time
+model_stance <- aov(`Stance Time` ~ Trials * Leg, data = data_table)
+TukeyHSD(model_stance)
+
+# swing time
+model_swing <- aov(`Swing Time` ~ Trials * Leg, data = data_table)
+TukeyHSD(model_swing)
+
+# double support time
+model_dst <- aov(`Double Support Time` ~ Trials * Leg, data = data_table)
+TukeyHSD(model_dst)
+
+# leading limb angle
+model_lla <- aov(`Leading Limb Angle` ~ Trials * Leg, data = data_table)
+TukeyHSD(model_lla)
+
+model_tla <- aov(`Trailing Limb Angle` ~ Trials * Leg, data = data_table)
+TukeyHSD(model_tla)
+```
+```{r}
+model <- manova(cbind(`Phase`) ~ Trials * Leg, 
+                data = data_table)
+
+summary(model)
+summary.aov(model)
+```
 
