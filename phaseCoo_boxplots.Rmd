@@ -1,0 +1,248 @@
+---
+title: "Boxplots"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Install Packages
+```{r}
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(rstatix)
+library(rgbif)
+```
+
+```{r}
+library(readxl)
+data <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/interlimbbiomechanics_2025Apr30.xls")
+data$Condition <- factor(data$Condition)
+data$Trials <- factor(data$Trials, levels=c('SlowHS','FastHS','AcceleratingHS','DeceleratingHS'),labels=c('Slow','Fast','Accelerate','Decelerate'))
+data$Leg <- as.factor(data$Leg)
+cood <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/centeroscillation_2025Apr30.xls")
+cood$Trials <- factor(cood$Trials, levels=c('SlowHS','FastHS','AcceleratingHS','DeceleratingHS'),labels=c('Slow','Fast','Accelerate','Decelerate'))
+df <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/COOPhasingtable.xls")
+df$Trials <- factor(df$Trials, levels=c('SlowHS','FastHS','AcceleratingHS','DeceleratingHS'),labels=c('Slow','Fast','Accelerate','Decelerate'))
+dfclean <- df %>% filter(`Time` == "last30" & `Leg` == "right")
+dfintra <- data %>% filter(`Condition` == "1")
+dfright <- data %>% filter(`Condition` == "1" & `Leg` == "right")
+dfleft <- data %>% filter(`Condition` == "1" & `Leg` == "left")
+```
+
+```{r}
+# Change box plot colors by groups
+ggplot(cood, aes(x=Trials, y=`Center of Oscillation Difference`, fill=interaction(Trials,Leg))) +
+  geom_boxplot(outlier.shape=NA) +
+  #geom_jitter(width = 0.2, size = 1.5, alpha = 0.6) +
+   geom_dotplot(binaxis='y', stackdir='center',
+                  position=position_dodge(1)) +
+ scale_fill_manual(values=c("#40A6FF","#FF00FF","#FF8000","#FFBF00","#8ECBFF","#FF76FF","#FFB162", "#FFDD76"))+
+  theme_classic()
+#ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/centerofoscillation.svg",width=7,height=4,units="in",dpi=300)
+```
+# Testing Cell
+```{r}
+ggplot(dfintra, aes(x=Trials, y=`Stance Time`, fill=interaction(Trials,Leg))) +
+  geom_boxplot(outlier.shape=NA) +
+  #geom_jitter(width = 0.2, size = 1.5, alpha = 0.6) +
+   geom_dotplot(binaxis='y', stackdir='center',
+                  position=position_dodge(1)) +
+ scale_fill_manual(values=c("#40A6FF","#FF00FF","#FF8000","#FFBF00","#8ECBFF","#FF76FF","#FFB162", "#FFDD76"))+
+  theme_classic()
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/stance_combined.svg",width=7,height=4,units="in",dpi=300)
+
+ggplot(dfintra, aes(x=Trials, y=`Swing Time`, fill=interaction(Trials,Leg))) +
+  geom_boxplot(outlier.shape=NA) +
+  #geom_jitter(width = 0.2, size = 1.5, alpha = 0.6) +
+   geom_dotplot(binaxis='y', stackdir='center',
+                  position=position_dodge(1)) +
+ scale_fill_manual(values=c("#40A6FF","#FF00FF","#FF8000","#FFBF00","#8ECBFF","#FF76FF","#FFB162", "#FFDD76"))+
+  theme_classic()
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/swing_combined.svg",width=7,height=4,units="in",dpi=300)
+
+ggplot(dfintra, aes(x=Trials, y=`Double Support Time`, fill=interaction(Trials,Leg))) +
+  geom_boxplot(outlier.shape=NA) +
+  #geom_jitter(width = 0.2, size = 1.5, alpha = 0.6) +
+   geom_dotplot(binaxis='y', stackdir='center',
+                  position=position_dodge(1)) +
+ scale_fill_manual(values=c("#40A6FF","#FF00FF","#FF8000","#FFBF00","#8ECBFF","#FF76FF","#FFB162", "#FFDD76"))+
+  theme_classic()
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/doublesupport_combined.svg",width=7,height=4,units="in",dpi=300)
+
+ggplot(dfintra, aes(x=Trials, y=`Leading Limb Angle`, fill=interaction(Trials,Leg))) +
+  geom_boxplot(outlier.shape=NA) +
+  #geom_jitter(width = 0.2, size = 1.5, alpha = 0.6) +
+   geom_dotplot(binaxis='y', stackdir='center',
+                  position=position_dodge(1)) +
+ scale_fill_manual(values=c("#40A6FF","#FF00FF","#FF8000","#FFBF00","#8ECBFF","#FF76FF","#FFB162", "#FFDD76"))+
+  theme_classic()
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/lla_combined.svg",width=7,height=4,units="in",dpi=300)
+
+ggplot(dfintra, aes(x=Trials, y=`Trailing Limb Angle`, fill=interaction(Trials,Leg))) +
+  geom_boxplot(outlier.shape=NA) +
+  #geom_jitter(width = 0.2, size = 1.5, alpha = 0.6) +
+   geom_dotplot(binaxis='y', stackdir='center',
+                  position=position_dodge(1)) +
+ scale_fill_manual(values=c("#40A6FF","#FF00FF","#FF8000","#FFBF00","#8ECBFF","#FF76FF","#FFB162", "#FFDD76"))+
+  theme_classic()
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/tla_combined.svg",width=7,height=4,units="in",dpi=300)
+```
+
+
+
+
+
+
+
+
+
+# phase shift
+```{r} 
+right <- ggplot(dfclean, aes(x = Trials, y = `Phasing`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA, size=0.25) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfclean$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) +
+  theme_classic() +
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+right <- right + labs(x = "", y = "phase shift")
+right + coord_cartesian(ylim = c(-0.15, 0.15))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/phaseshift.svg",width=7,height=4,units="in",dpi=300)
+
+left<-ggplot(dfclean, aes(x = Trials, y = `Center of Oscillation Difference`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfclean$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) +
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+left <- left + labs(x = "", y = "center of oscillation difference")
+left + coord_cartesian(ylim = c(-10,10))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/centerofoscillationdifference.svg",width=7,height=4,units="in",dpi=300)
+```
+
+# stance time
+```{r} 
+right <- ggplot(dfright, aes(x = Trials, y = `Stance Time`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfright$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) +
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+right <- right + labs(x = "trials", y = "right stance time (s)")
+right + coord_cartesian(ylim = c(0.6, 1.2))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/stancetimeright.svg",width=7,height=4,units="in",dpi=300)
+
+left<-ggplot(dfleft, aes(x = Trials, y = `Stance Time`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfleft$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) +
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+left <- left + labs(x = "trials", y = "left stance time (s)")
+left + coord_cartesian(ylim = c(0.6, 1.2))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/stancetimeleft.svg",width=7,height=4,units="in",dpi=300)
+```
+# swing time
+```{r} 
+right <- ggplot(dfright, aes(x = Trials, y = `Swing Time`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfright$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) + 
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+right <- right + labs(x = "trials", y = "right swing time (s)")
+right + coord_cartesian(ylim = c(0.3, 0.7))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/swingtimeright.svg",width=7,height=4,units="in",dpi=300)
+
+left<-ggplot(dfleft, aes(x = Trials, y = `Swing Time`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfleft$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) +
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+left <- left + labs(x = "trials", y = "left swing time (s)")
+left + coord_cartesian(ylim = c(0.3, 0.7))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/swingtimeleft.svg",width=7,height=4,units="in",dpi=300)
+```
+# lla
+```{r} 
+right <- ggplot(dfright, aes(x = Trials, y = `Leading Limb Angle`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfright$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) + 
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+right<-right + labs(x = "trials", y = "right leading limb angle (deg)")
+right + coord_cartesian(ylim = c(10,35))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/llaright.svg",width=7,height=4,units="in",dpi=300)
+
+left<-ggplot(dfleft, aes(x = Trials, y = `Leading Limb Angle`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfleft$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) + 
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+left <-left + labs(x = "trials", y = "left leading limb angle (deg)")
+left + coord_cartesian(ylim = c(10,35))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/llaleft.svg",width=7,height=4,units="in",dpi=300)
+```
+# tla
+```{r} 
+right <- ggplot(dfright, aes(x = Trials, y = `Trailing Limb Angle`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfright$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) +
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+right<-right + labs(x = "trials", y = "right trailing limb angle (deg)")
+right + coord_cartesian(ylim = c(-30,-5))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/tlaright.svg",width=7,height=4,units="in",dpi=300)
+
+left<-ggplot(dfleft, aes(x = Trials, y = `Trailing Limb Angle`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfleft$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) + 
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+left <-left + labs(x = "trials", y = "left trailing limb angle (deg)")
+left + coord_cartesian(ylim = c(-30,-5))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/tlaleft.svg",width=7,height=4,units="in",dpi=300)
+```
+
+# ds time
+```{r} 
+right <- ggplot(dfright, aes(x = Trials, y = `Double Support Time`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfright$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) +
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+right <- right + labs(x = "trials", y = "right double support time (s)")
+right + coord_cartesian(ylim = c(0.15, 0.45))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/dstimeright.svg",width=7,height=4,units="in",dpi=300)
+
+left<-ggplot(dfleft, aes(x = Trials, y = `Double Support Time`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = dfleft$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF")) + 
+  theme_classic()+
+  theme(legend.position = "none", text = element_text(size = 14, color = "black"), axis.text.x = element_text(color = "black"), axis.text.y = element_text(color = "black")) 
+left <- left + labs(x = "trials", y = "left double support time (s)")
+left + coord_cartesian(ylim = c(0.15, 0.45))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/Biomechanics/Box Plots/dstimeleft.svg",width=7,height=4,units="in",dpi=300)
+```
