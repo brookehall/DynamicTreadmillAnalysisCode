@@ -1,0 +1,67 @@
+---
+title: "crossCorrelationBoxplots"
+author: "Brooke Hall"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Install Packages
+```{r}
+library(dplyr)
+library(ggplot2)
+library(ggpubr)
+library(rstatix)
+library(rgbif)
+library(readxl)
+library(stats)
+```
+# Load in data
+```{r}
+data <- read_excel("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Data Files/xcoretable_2025May05.xls")
+data[data == 0] <- NA
+```
+# Cross correlation boxplots
+```{r}
+df <- ggplot(data, aes(x = Trials, y = `Cross Correlations`, fill = Trials)) +  # Change filling color
+  geom_boxplot(outlier.shape=NA) +
+  geom_jitter(width=0.15)+
+    scale_fill_manual(breaks = data$Trials,
+                    values = c("#FF8000", "#FFBF00", "#FF00FF", "#40A6FF"))
+df <- df + labs(x = "trials", y = "cross correlation")
+df + coord_cartesian(ylim = c(0.9, 1.05))
+ggsave("C:/Users/hallbl/OneDrive - Kennedy Krieger/Control Study/Updated/Manuscripts/Current/Updated Interlimb Figures/crosscorrelations/BoxPlots/2025May05.svg",width=7,height=4,units="in",dpi=300)
+```
+# One way ANOVA to see if the trials differ
+```{r}
+aov_xcore <- aov(`Cross Correlations`~Trials+Error(Participants), data = data)
+summary(aov_xcore)
+get_anova_table(aov_xcore, correction=c("GG"))
+```
+# One way ANOVA to see if participants differ
+```{r}
+aov_xcore <- aov(`Cross Correlations`~Participants+Error(Trials), data = data)
+summary(aov_xcore)
+get_anova_table(aov_xcore, correction=c("GG"))
+```
+# post hoc analysis for the trial ANOVA
+```{r}
+trial.effect <- data %>%
+  pairwise_t_test(
+    `Cross Correlations` ~ Trials, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+trial.effect %>% print(width=Inf)
+```
+# post hoc analysis for the participant ANOVA
+```{r}
+participant.effect <- data %>%
+  pairwise_t_test(
+    `Cross Correlations` ~ Participants, paired = TRUE,
+    p.adjust.method = "bonferroni"
+    )
+participant.effect %>% print(width=Inf)
+```
+
